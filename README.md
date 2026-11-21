@@ -98,7 +98,7 @@ interface PaymentStore {
 | `pay(paymentRequired, resourceUrl?)` | agent key | `{ payment, header, authorization, valid_before, amount, spent_today }` |
 | `send({ to, amount, memo? })` | agent key | agent-to-agent payment `{ tx_hash, tx_url, amount }`. Needs `allow_a2a`, and the paying agent wallet pays the gas in ETH |
 | `config()` | public | network, USDG, facilitators, relayer status |
-| `stats()` | public | public network stats |
+| `stats()` | account key | network stats for signed-in accounts: every recorded payment, outside vs team |
 | `request(method, path, body?)` | | any other endpoint |
 
 API errors throw `RailPayError` with `status`, `code` and `message`. Policy refusals are `403` with code `paused`, `over_per_request`, `over_daily_cap`, `host_not_allowed`, `pay_to_not_allowed`, `a2a_not_allowed`, `insufficient_funds` or `insufficient_gas`, and each one is logged on the agent in the dapp.

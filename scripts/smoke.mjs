@@ -8,8 +8,9 @@ const client = new RailPay({ baseUrl: base });
 const config = await client.config();
 console.log("config:", JSON.stringify({ network: config.network, chain_id: config.chain_id, facilitators: config.facilitators, relayer_status: config.relayer_status }));
 
-const stats = await client.stats();
-console.log("stats keys:", Object.keys(stats).join(", "));
+const stats = await fetch(`${base}/v1/stats`);
+if (stats.status !== 401) throw new Error(`expected /v1/stats to need an account key, got ${stats.status}`);
+console.log("stats: account key required (401 without one)");
 
 const res = await fetch(`${base}/x402/time`);
 if (res.status !== 402) throw new Error(`expected 402 from /x402/time, got ${res.status}`);

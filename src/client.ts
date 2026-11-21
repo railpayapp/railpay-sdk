@@ -51,7 +51,7 @@ export type SignedPayment = {
 export type SendResult = { tx_hash: string; tx_url: string; amount: string; pending?: boolean };
 
 export type RailPayOptions = {
-  /** Agent key (`rp_sk_…`). Needed for the agent methods; `config()` and `stats()` are public. */
+  /** API key (`rp_sk_…`). An agent key for the agent methods; an account key for `stats()`. `config()` is public. */
   apiKey?: string;
   baseUrl?: string;
   fetch?: typeof fetch;
@@ -123,7 +123,7 @@ export class RailPay {
     return this.request("GET", "/v1/config");
   }
 
-  /** Public network stats: every recorded payment, outside vs team. Public. */
+  /** Network stats: every recorded payment, outside vs team. Needs an account key (signed-in accounts only). */
   async stats(): Promise<Record<string, unknown>> {
     return this.request("GET", "/v1/stats");
   }
