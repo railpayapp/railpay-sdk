@@ -1,0 +1,59 @@
+{
+  "name": "railpay-sdk",
+  "version": "0.1.0",
+  "description": "TypeScript SDK for RailPay: x402 v2 agent payments and a USDG paywall kit on Robinhood Chain.",
+  "license": "MIT",
+  "homepage": "https://docs.railpay.app",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/railpayapp/railpay-sdk.git"
+  },
+  "bugs": {
+    "url": "https://github.com/railpayapp/railpay-sdk/issues"
+  },
+  "author": "RailPay",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "smoke": "node scripts/smoke.mjs",
+    "prepare": "tsup"
+  },
+  "keywords": [
+    "railpay",
+    "x402",
+    "usdg",
+    "robinhood-chain",
+    "eip-3009",
+    "ai-agents",
+    "payments",
+    "stablecoin"
+  ],
+  "dependencies": {
+    "viem": "2.58.2"
+  },
+  "devDependencies": {
+    "@types/node": "26.1.1",
+    "tsup": "8.5.1",
+    "typescript": "5.9.3",
+    "vitest": "4.1.10"
+  },
+  "packageManager": "pnpm@12.16.1"
+}
