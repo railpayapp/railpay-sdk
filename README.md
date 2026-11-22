@@ -1,3 +1,5 @@
+![railpay-sdk: RailPay](.github/banner.png)
+
 # railpay-sdk
 
 TypeScript SDK for [RailPay](https://railpay.app): stablecoin payments on Robinhood Chain.
@@ -134,6 +136,7 @@ pnpm smoke   # read-only check against https://dapp.railpay.app, spends nothing
 
 ## Links
 
+- Website: https://railpay.app
 - Docs: https://docs.railpay.app
 - Dapp: https://dapp.railpay.app
 - MCP server: https://github.com/railpayapp/railpay-mcp
