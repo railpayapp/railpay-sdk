@@ -11,12 +11,14 @@ Settlement is real: USDG (Global Dollar, 6 decimals) on Robinhood Chain (chain i
 
 ## Install
 
-The package is not on npm yet. Install it from GitHub:
+The package is not on npm yet. Install it from the GitHub release tarball:
 
 ```sh
-pnpm add github:railpayapp/railpay-sdk
-# or: npm install github:railpayapp/railpay-sdk
+pnpm add https://github.com/railpayapp/railpay-sdk/releases/download/v0.1.0/railpay-sdk-0.1.0.tgz
+# or: npm install https://github.com/railpayapp/railpay-sdk/releases/download/v0.1.0/railpay-sdk-0.1.0.tgz
 ```
+
+The tarball is built, so nothing runs at install time. Installing straight from git (`github:railpayapp/railpay-sdk`) needs a build step, which pnpm 10+ blocks unless you add the package to `allowBuilds`.
 
 The one runtime dependency is [viem](https://viem.sh). It runs on Node 20+, Bun, Deno and Cloudflare Workers.
 
