@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.2.0 · 2026-11-23
+
+- `config()` now returns a typed `RailPayConfig` instead of `Record<string, unknown>`. Unknown fields are kept, so existing code keeps working.
+- New `TreasuryReceipt` type for `config().settlements.treasury_receipts`: x402 payments settled on-chain to the RailPay treasury, with `tx`, `block` and `payer_is_team`.
+- `config()` also exposes `gas_note` (x402 gas is paid by the facilitator, the relayer is only for agent-to-agent sends and withdrawals) and `token` ($RPAY address and its role in the product).
+- README: how to check a settled payment, install from the v0.2.0 tarball.
+
 ## v0.1.0 · 2026-11-21
 
 First release.
