@@ -14,8 +14,8 @@ Settlement is real: USDG (Global Dollar, 6 decimals) on Robinhood Chain (chain i
 The package is not on npm yet. Install it from the GitHub release tarball:
 
 ```sh
-pnpm add https://github.com/railpayapp/railpay-sdk/releases/download/v0.1.0/railpay-sdk-0.1.0.tgz
-# or: npm install https://github.com/railpayapp/railpay-sdk/releases/download/v0.1.0/railpay-sdk-0.1.0.tgz
+pnpm add https://github.com/railpayapp/railpay-sdk/releases/download/v0.2.0/railpay-sdk-0.2.0.tgz
+# or: npm install https://github.com/railpayapp/railpay-sdk/releases/download/v0.2.0/railpay-sdk-0.2.0.tgz
 ```
 
 The tarball is built, so nothing runs at install time. Installing straight from git (`github:railpayapp/railpay-sdk`) needs a build step, which pnpm 10+ blocks unless you add the package to `allowBuilds`.
@@ -77,7 +77,16 @@ If the transfer is broadcast but not confirmed yet, the answer is `402 settlemen
 
 ### Gas and facilitators
 
-Settlement goes through outside x402 facilitators that pay the gas and charge no key: [Toll](https://x402.t0ll.xyz) first, then [Primer](https://x402.primer.systems). They are third-party services, not run by RailPay, and they have their own limits (Toll: 0.001 to 100 USDG per payment). You can pass your own list with `facilitators`. A RailPay relayer is coming soon.
+Settlement goes through outside x402 facilitators that pay the gas and charge no key: [Toll](https://x402.t0ll.xyz) first, then [Primer](https://x402.primer.systems). They are third-party services, not run by RailPay, and they have their own limits (Toll: 0.001 to 100 USDG per payment). You can pass your own list with `facilitators`. A RailPay relayer is coming soon; x402 does not need it, it would only pay gas for agent-to-agent sends and withdrawals.
+
+### Check a settled payment
+
+`config().settlements.treasury_receipts` lists x402 payments settled to the RailPay treasury, newest first, each with `tx`, `block` and `payer_is_team`. The first one, on 2026-11-23, came from a team wallet with no RailPay account: [`0x988a…41b0`](https://robinhoodchain.blockscout.com/tx/0x988a0174792c1de16af8922b84324efd6f4fa6f2c7f0dd6eaebb5b16a9f641b0), block 121421058, 0.002 USDG for `/x402/quote`.
+
+```ts
+const { settlements } = await new RailPay().config();
+for (const r of settlements?.treasury_receipts ?? []) console.log(r.amount, r.asset, r.block, r.explorer, r.payer_is_team ? "team" : "outside");
+```
 
 ### Running on more than one instance
 
@@ -101,7 +110,7 @@ interface PaymentStore {
 | `me()` | agent key | the agent: address, USDG `balance` (base units), `eth`, `spent_today`, `policy` |
 | `pay(paymentRequired, resourceUrl?)` | agent key | `{ payment, header, authorization, valid_before, amount, spent_today }` |
 | `send({ to, amount, memo? })` | agent key | agent-to-agent payment `{ tx_hash, tx_url, amount }`. Needs `allow_a2a`, and the paying agent wallet pays the gas in ETH |
-| `config()` | public | network, USDG, facilitators, relayer status |
+| `config()` | public | typed `RailPayConfig`: network, USDG, facilitators, relayer status, `gas_note`, settled treasury payments (`settlements.treasury_receipts`), `token` |
 | `stats()` | account key | network stats for signed-in accounts: every recorded payment, outside vs team |
 | `request(method, path, body?)` | | any other endpoint |
 

@@ -50,6 +50,44 @@ export type SignedPayment = {
 
 export type SendResult = { tx_hash: string; tx_url: string; amount: string; pending?: boolean };
 
+/** An x402 payment settled on-chain to the RailPay treasury for one of RailPay's own resources. */
+export type TreasuryReceipt = {
+  tx: string;
+  block: number;
+  log_index: number;
+  /** USDG decimal string, e.g. "0.002". */
+  amount: string;
+  asset: string;
+  payer: string;
+  /** True when the paying wallet belongs to the RailPay team. */
+  payer_is_team: boolean;
+  resource: string | null;
+  settled_at: string;
+  explorer: string;
+};
+
+/** `GET /v1/config`. Unknown future fields are kept. */
+export type RailPayConfig = {
+  chain_id: number;
+  chain_name: string;
+  network: string;
+  rpc: string;
+  explorer: string;
+  asset: { symbol: string; address: string; decimals: number };
+  treasury: string;
+  relayer: string | null;
+  relayer_status: "coming_soon" | "live";
+  facilitators: string[];
+  gas: { x402: string; agent_to_agent: string; withdraw: string };
+  gas_note?: string;
+  x402: { version: number; scheme: string; network: string; asset_transfer_method: string; eip712: { name: string; version: string }; min_amount: number };
+  /** Settled x402 payments to the RailPay treasury, newest first, with tx hash and block so anyone can check them on-chain. */
+  settlements?: { about: string; treasury_receipts: TreasuryReceipt[]; guide: string };
+  /** $RPAY: address and its role in the product (none today: payments settle in USDG). */
+  token?: { symbol: string; address: string; role: string; page: string };
+  [key: string]: unknown;
+};
+
 export type RailPayOptions = {
   /** API key (`rp_sk_…`). An agent key for the agent methods; an account key for `stats()`. `config()` is public. */
   apiKey?: string;
@@ -118,9 +156,9 @@ export class RailPay {
     return this.request<SendResult>("POST", "/v1/agent/send", input);
   }
 
-  /** Network settings: chain, USDG, facilitators, x402 settings. Public. */
-  async config(): Promise<Record<string, unknown>> {
-    return this.request("GET", "/v1/config");
+  /** Network settings: chain, USDG, facilitators, x402 settings, settled treasury payments, token. Public. */
+  async config(): Promise<RailPayConfig> {
+    return this.request<RailPayConfig>("GET", "/v1/config");
   }
 
   /** Network stats: every recorded payment, outside vs team. Needs an account key (signed-in accounts only). */
