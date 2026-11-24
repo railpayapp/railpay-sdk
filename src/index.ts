@@ -24,4 +24,5 @@ export {
   type TreasuryReceipt,
 } from "./client.js";
 export { withPayment, type PayingFetchOptions, type PaymentEvent } from "./fetch.js";
+export { verifyPayment, type VerifyOptions, type VerifiedPayment, type VerifyReason, type PaymentTransfer } from "./verify.js";
 export { createPaywall, memoryStore, type Paywall, type PaywallOptions, type PaymentStore, type StoredPayment } from "./seller.js";

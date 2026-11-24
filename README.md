@@ -14,8 +14,8 @@ Settlement is real: USDG (Global Dollar, 6 decimals) on Robinhood Chain (chain i
 The package is not on npm yet. Install it from the GitHub release tarball:
 
 ```sh
-pnpm add https://github.com/railpayapp/railpay-sdk/releases/download/v0.2.0/railpay-sdk-0.2.0.tgz
-# or: npm install https://github.com/railpayapp/railpay-sdk/releases/download/v0.2.0/railpay-sdk-0.2.0.tgz
+pnpm add https://github.com/railpayapp/railpay-sdk/releases/download/v0.3.0/railpay-sdk-0.3.0.tgz
+# or: npm install https://github.com/railpayapp/railpay-sdk/releases/download/v0.3.0/railpay-sdk-0.3.0.tgz
 ```
 
 The tarball is built, so nothing runs at install time. Installing straight from git (`github:railpayapp/railpay-sdk`) needs a build step, which pnpm 10+ blocks unless you add the package to `allowBuilds`.
@@ -88,6 +88,22 @@ const { settlements } = await new RailPay().config();
 for (const r of settlements?.treasury_receipts ?? []) console.log(r.amount, r.asset, r.block, r.explorer, r.payer_is_team ? "team" : "outside");
 ```
 
+### Verify a payment on chain
+
+You don't have to trust that list, or any seller's word. `verifyPayment(tx)` reads the receipt and the block straight from a Robinhood Chain JSON-RPC node (publicnode by default; RailPay's API is never called) and decodes the USDG transfer and the EIP-3009 authorization. Pass `payTo` and `amount` to check that the money went where it should, in the exact amount. It runs in Node and in the browser. The same check is a page anyone can open: [dapp.railpay.app/check](https://dapp.railpay.app/check).
+
+```ts
+import { verifyPayment } from "railpay-sdk";
+
+const v = await verifyPayment("0x988a0174792c1de16af8922b84324efd6f4fa6f2c7f0dd6eaebb5b16a9f641b0", {
+  payTo: "0xc74444dd7c6183b0f810487ef9dab8d7333a3709",
+  amount: "0.002",
+});
+// v.ok === true, v.block === 121421058, v.payer = the team wallet 0x2c92…e611,
+// v.authorization.nonce = the EIP-3009 nonce, v.gas_payer = the facilitator that paid the gas (102903 gas)
+if (!v.ok) throw new Error(`not paid: ${v.reason}`); // not_found | reverted | no_transfer | pay_to_mismatch | amount_mismatch
+```
+
 ### Running on more than one instance
 
 The default `memoryStore()` remembers payments inside one process. Once a payment is settled its nonce is spent on-chain, so a replay sent to another instance is refused anyway. The gap is two instances settling the same authorization at the same moment. On serverless platforms or with several replicas, pass a shared `store` whose `claim()` is an atomic insert-if-absent (a database row with a unique key, Redis `SET NX`, a Durable Object).
@@ -123,6 +139,10 @@ Returns a `fetch`-compatible function. `maxAmount` is a USDG decimal string or b
 ### `createPaywall({ payTo, price, description?, mimeType?, facilitators?, rpcUrl?, store?, fetch?, receiptWaitMs? })`
 
 Returns `{ price, payTo, requirements(url), handle(request, serve) }`. `rpcUrl` defaults to `https://robinhood-rpc.publicnode.com`.
+
+### `verifyPayment(tx, { payTo?, amount?, asset?, rpcUrl?, fetch? })`
+
+Returns `{ ok, reason, tx, block, settled_at, asset, payer, pay_to, amount, amount_raw, authorization, gas_payer, gas_used, explorer, transfers, checks }`. `checks` = `{ succeeded, transfer, pay_to, amount, authorization }`; `pay_to` and `amount` are `null` when you did not pass them. `amount` is an exact match, like the x402 `exact` scheme.
 
 ### Helpers
 
