@@ -1,6 +1,6 @@
 {
   "name": "railpay-sdk",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "TypeScript SDK for RailPay: x402 v2 agent payments and a USDG paywall kit on Robinhood Chain.",
   "license": "MIT",
   "homepage": "https://docs.railpay.app",

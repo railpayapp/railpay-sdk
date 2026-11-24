@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.3.0 · 2026-11-24
+
+- New `verifyPayment(tx, { payTo?, amount? })`: checks a payment on Robinhood Chain without trusting RailPay. It reads the receipt and block from a JSON-RPC node (publicnode by default) and returns the payer, recipient, amount, the EIP-3009 authorization nonce, who paid the gas, the block and its time, plus `ok` and a `reason` when it fails (`not_found`, `reverted`, `no_transfer`, `pay_to_mismatch`, `amount_mismatch`). Works in Node and in the browser.
+- README: "Verify a payment on chain", with the first settled x402 payment as the example.
+
 ## v0.2.0 · 2026-11-23
 
 - `config()` now returns a typed `RailPayConfig` instead of `Record<string, unknown>`. Unknown fields are kept, so existing code keeps working.
